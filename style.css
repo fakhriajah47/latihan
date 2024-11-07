@@ -1,0 +1,50 @@
+h1{
+    text-transform:uppercase;
+    color: crimson;
+    font-family: jokerman;
+}
+
+hr{
+    border:2px red dotted ;
+
+}
+
+fieldset,legend{
+    border: 2px solid red;
+    border-radius: 35px;
+    padding: 2px ;
+}
+
+legend{
+    background-color: antiquewhite;
+
+}
+fieldset{
+
+}
+a:link,a:visited a:visited{
+        text-decoration: none;
+        border: solid 1px yellow;
+        background-color: aliceblue;
+        color: aqua;
+        border-radius: 25px;
+
+}
+a:hover{
+    text-decoration: none;
+    border: dashed 2px yellow;
+    background-color: rgb(255, 204, 0);
+    color: rgb(232, 119, 27);
+    border-radius: 35px;
+    
+}
+#atas, #bawah{
+    text-align: right;
+}
+p{
+    text-align: justify;
+    color: blueviolet;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    list-style: 1cm;
+    font-size: 14px;
+}

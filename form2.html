@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>UTS PRAKTEK</title>
+</head>
+
+<style>
+body {
+ padding: 0px;
+ margin: 0px;
+ font-family: "Poppins", sans-serif;
+}
+ 
+fieldset {
+   border: 1px solid #ccc;
+   border-radius: 5px;
+ }
+
+.content {
+  margin: auto;
+  max-width: fit-content
+}
+
+h3 {
+  color: #132043;
+}
+
+tr td {
+  padding: 6px;
+}
+ 
+#namaruangan {
+  width: 300px;
+}
+
+#kategori, #kapasitas {
+  width: 150px;
+}
+
+label {
+  font-size: 14px;
+  display: block;
+  text-align: end;
+}
+
+input, textarea, select {
+  border-radius: 3px;
+  border: 1px solid #ccc;
+}
+
+.simpan {
+  background-color: #0174BE;
+  color: white;
+  border: 0;
+  border-radius: 3px;
+  padding: 7px;
+}
+
+.simpan:hover {
+  background-color: blue;
+  color: #ccc;
+}
+
+.batal {
+  background-color: #D83F31;
+  color: white;
+  border: 0;
+  border-radius: 3px;
+  padding: 7px;
+}
+
+.batal:hover {
+  background-color: red;
+  color: #ccc;
+}
+
+</style>
+
+<body>
+  <div class="content">
+    <fieldset>
+      <legend>
+        <h3>Kelola Ruangan</h3>
+      </legend>
+      <form action="#" method="post">
+        <table>
+          <tr>
+            <td>
+              <label for="namaruangan">Nama Ruangan:</label>
+            </td>
+            <td>
+              <input type="text" name="namaruangan" id="namaruangan" placeholder="">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="kategori">Kategori:</label>
+            </td>
+            <td>
+              <select name="kategori" id="kategori">
+                <option value="Aula">Aula</option>
+                <option value="B3-403">B3-403</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="deskripsi">Deskripsi Ruangan:</label>
+            </td>
+            <td>
+              <textarea name="deskripsi" id="" cols="37" rows="3"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="fasilitas">Fasilitas Ruangan:</label>
+            </td>
+            <td>
+              <input type="checkbox" name="fasilitas" id="fasilitas" value="sound system"><small>Sound System</small>
+              <input type="checkbox" name="fasilitas" id="fasilitas"><small>Wifi</small>
+              <input type="checkbox" name="fasilitas" id="fasilitas"><small>Layar Lebar</small>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="kapasitas">Kapasitas:</label>
+            </td>
+            <td>
+              <input type="text" name="kapasitas" id="kapasitas">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label for="lokasi">Lokasi Ruangan</label>
+            </td>
+            <td>
+              <input type="text" name="lokasi" id="lokasi">
+            </td>            
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <button class="simpan" type="submit">Simpan</button>
+              <button class="batal" type="reset">Batal</button>
+            </td>
+          </tr>
+        </table>
+      </form>
+    </fieldset>
+  </div>
+</body>
+</html>
