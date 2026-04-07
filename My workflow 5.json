@@ -1,0 +1,446 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFile",
+        "fileToWatch": {
+          "__rl": true,
+          "value": "1XDzbbxf2N1tazEp7L6_dnBZrSTaDtZlxaFKrYvjqlmg",
+          "mode": "list",
+          "cachedResultName": "02 - Laporan Keuangan ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XDzbbxf2N1tazEp7L6_dnBZrSTaDtZlxaFKrYvjqlmg/edit?usp=drivesdk"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "01ae9ac5-bd48-4f62-8778-3fbebcf5e1d5",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "bWJwXmRVcwU1zeAm",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6c864f9d-89e0-429c-8c03-afc3e32846f3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1XDzbbxf2N1tazEp7L6_dnBZrSTaDtZlxaFKrYvjqlmg",
+          "mode": "list",
+          "cachedResultName": "02 - Laporan Keuangan ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XDzbbxf2N1tazEp7L6_dnBZrSTaDtZlxaFKrYvjqlmg/edit?usp=drivesdk"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "3cffb3ee-478c-405b-ab59-f39a6dcb099e",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "bWJwXmRVcwU1zeAm",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "51027873-8fed-4fae-b58e-6206239a11b2",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        848,
+        -16
+      ],
+      "id": "26dd3314-8f64-45b8-90de-ff24c674b220",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "mBNkulTUnKIfzLWc",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-2-preview"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        784,
+        224
+      ],
+      "id": "3dfd4430-5595-4503-930e-d8093784c973",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "CO6pwJxpqWp09KjI",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "file_id",
+                "value": "={{ $('Edit Fields').item.json.file_id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1088,
+        176
+      ],
+      "id": "e755a73d-2701-4888-958c-072241e7d1f4",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        48
+      ],
+      "id": "7ef79521-73e9-41df-a98a-0345080e503a",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        48,
+        400
+      ],
+      "id": "79c17e69-9a60-4317-bcef-79a097cd6beb",
+      "name": "When chat message received",
+      "webhookId": "0215baf5-4561-452c-b801-4472a8a24679"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        256,
+        400
+      ],
+      "id": "597b457d-3bcc-4c1f-a983-ffc6a66dd01f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        128,
+        608
+      ],
+      "id": "4a7280de-a88a-4b4a-92c2-e3d725430708",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "CO6pwJxpqWp09KjI",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "saya ganteng",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        704
+      ],
+      "id": "cc34ad5a-aedd-4275-8a22-e1728f7753bc",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "mBNkulTUnKIfzLWc",
+          "name": "Supabase account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        528,
+        912
+      ],
+      "id": "bc603854-414a-4cc8-901e-95b0b4e14dea",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "CO6pwJxpqWp09KjI",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        608
+      ],
+      "id": "d8a83907-86cd-45df-8150-300cdd213538",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "uPQDD0sUEIGf1dc6",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Extract from File": [
+      {
+        "json": {
+          "data": ",,UANG KAS PENGURUS LDK SENADA 2025,,,,,,,,,,,,,,,,,,,,,\r\nNO,NAMA,BULAN,,,,,,,,,,,,,,,,,,,,,\r\n,,April ,Ket,Mei,Ket,Juni,Ket,Juli,Ket,Agustus,Ket,September,Ket,Oktober,Ket,November,Ket,Desember,Ket,Januari,Ket,,17\r\n1,Abdul Hafid Mualimin,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n2,Achmad Muflih Alrasyid,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n3,Ahmad Hamizan,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n4,Aisah Khoirunisa,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n5,Ali Mahbub Al Huwaidi,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,,Dana,Rp90.000,tf\r\n6,Alya Dliya Zahra Andre,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n7,Anisa Ftiriyani,10000,Dana,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n8,Aris,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n9,Aziz Maulana Hakim,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n10,Chairil Rahman,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n11,Dani Fadli Hermawan,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n12,Dina Karmila,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n13,Fakhri Rimbawan,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n14,Fauzan Alfarizy Suryaman,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n15,Galuh Azhary Putri Aya Balynese,10000,Tunai,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Infaq,Rp100.000,\r\n16,Hamdi Ni'ami Rabbi,10000,Tunai,10000,Dana,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n17,Hana Fadhillah Ramadhani,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,,Dana,Rp90.000,tf\r\n18,Huriyah Syakira Nailah,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n19,Kurnia Putri Pratiwi,10000,Tunai,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n20,M.Ikhsan Aflahal,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n21,Mohamad Alit Zikrillah Maulana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Infaq,Rp100.000,\r\n22,Muhamad Faizal Fikri,10000,Tunai,10000,Tunai,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,,Dana,Rp90.000,tf\r\n23,Muhammad Alfin Sahal,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n24,Muhammad Ammar,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,,Tunai,Rp90.000,tf\r\n25,Muhammad Hudzaifah Ali Al-Mubarok,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n26,Muhammad Fatih Ikhlasul Amal,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n27,Muhammad Fikrie El Muqoffa,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n28,Muhammad Ihsan,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,,Dana,Rp90.000,tf\r\n29,Muhammad Ridwan Karim,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Infaq,Rp100.000,\r\n30,Muhammad Syahrul Fauzan,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n31,Muhammad Umam Afif,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Infaq,Rp100.000,\r\n32,Mutiah,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Infaq,Rp100.000,\r\n33,Naazila Alfa Syahrin,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n34,Najwa Aina Nazqia,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n35,Neng Fauziyah Hasanah,10000,Tunai,10000,Tunai,10000,Transfer,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n36,Nihayatul Janiah,10000,Tunai,10000,Tunai,10000,Transfer,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Transfer,,,Rp90.000,\r\n37,Nur Rahma Tiawati,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n38,Nurul Hayatu Suhaila,10000,Tunai,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n39,Nurul Intan,10000,Tunai,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n40,Puspita Sari,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n41,Rahma Hervina Dwi Lestari,10000,Tunai,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n42,Risfadilla Dwi Wulandari,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Infaq,Rp90.000,\r\n43,Rissa Ulandari,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Infaq,Rp100.000,\r\n44,Rumaisha,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n45,Sabian Vasyelino,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n46,Sabila Hanifa Adnan,10000,Tunai,10000,Dana,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n47,Salamah Mutmainnah,10000,Tunai,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n48,Salma Karimah,10000,Tunai,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,\r\n49,Salman Maula Ash-Shidqi,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n50,Salwa Mufidah,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Infaq,Rp100.000,\r\n51,Shabrina Miladdina,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n52,Silvia Pitriani,10000,Tunai,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n53,Susi Yanti,10000,Tunai,10000,Dana,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n54,Suwarda Aulia,10000,Tunai,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n55,Syifa Maulida Kartini,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Tunai,10000,Tunai,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n56,Taqi Rabbani,10000,Tunai,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,,,,,Rp70.000,\r\n57,Wahyu Ahmad Yassin,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n58,Yaasir Aidil Fitrah,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Tunai,10000,Infaq,Rp100.000,\r\n59,Yola Amanda Lestary,10000,Tunai,10000,Dana,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Tunai,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n60,Yurida Yahsya,10000,Dana,10000,Dana,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n61,Zahra Zuliyani Utami,10000,Tunai,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Infaq,Rp100.000,\r\n62,Zaidaan Salman Saffiq,10000,Dana,10000,Dana,10000,Dana,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,10000,Transfer,,,Rp90.000,\r\n63,Zhafirah Chairunnisa,10000,Tunai,10000,Dana,10000,Transfer,10000,Transfer,10000,Transfer,10000,Tunai,10000,Transfer,10000,Transfer,10000,Transfer,,Transfer,Rp90.000,tf\r\n,Total Perbulan,Rp630.000,Rp0,Rp630.000,Rp0,Rp630.000,Rp0,Rp630.000,Rp0,Rp630.000,,Rp630.000,,Rp630.000,,Rp620.000,,Rp620.000,,Rp240.000,,Rp5.890.000,\r\n,,TOTAL,,,,,,,,,,,,,,,,,,,,,"
+        },
+        "binary": {},
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7abe75cd-87a1-4f2d-8acd-a3ef6a059faa",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "101e81784514bf6a04bc42ef400968d333e429402a66ac59f078419b589c20a6"
+  },
+  "id": "1dRNzBeg8fbPcxhI",
+  "tags": []
+}
